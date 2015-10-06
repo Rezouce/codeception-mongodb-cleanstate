@@ -1,0 +1,21 @@
+{
+  "name": "Rezouce/codeception-mongodb-cleanstate",
+  "description": "Drop MongoDB databases to ensure each test using MongoDB are in a clean environment",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Rezouce",
+      "email": "contact@rezouce.net"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Codeception\\Module\\": "src"
+    }
+  },
+  "require": {
+    "ext-mongo": "1.*",
+    "codeception/codeception": "2.*"
+  }
+}
