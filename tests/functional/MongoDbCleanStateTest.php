@@ -99,4 +99,27 @@ class MongoDbCleanStateTest extends \Codeception\TestCase\Test
 
         $this->assertEquals('' . $module->server(), 'mongodb://env_user:env_pass@env_host:env_port');
     }
+
+    public function testModuleUseDatabasesFromEnv()
+    {
+        $database = 'test1';
+        putenv("MONGO_DATABASE=$database");
+
+        /** @var ModuleContainer $moduleContainer */
+        $moduleContainer = Stub::make('Codeception\Lib\ModuleContainer');
+        $module = new \Codeception\Module\MongoDbCleanState(
+            $moduleContainer,
+            ['fromEnv' => true, 'databases' => ['MONGO_DATABASE']]
+        );
+
+        $this->mongoClient = $module->getMongoClient();
+
+        $this->createDatabaseWithCollection($database, 'testCollection');;
+
+        /** @var TestCase $test */
+        $test = Stub::make('Codeception\TestCase');
+        $module->_before($test);
+
+        $this->assertDatabaseHasBeenDeleted($database);
+    }
 }

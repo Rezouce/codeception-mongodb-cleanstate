@@ -18,9 +18,33 @@ class MongoDbCleanState extends Module
      */
     public function __construct(ModuleContainer $container, $config = null)
     {
-        $this->databases = isset($config['databases']) ? $config['databases'] : [];
-
         parent::__construct($container, $config);
+
+        $this->databases();
+    }
+
+    /**
+     * Get the databases
+     */
+    private function databases()
+    {
+        $this->databases = isset($this->config['databases']) ? $this->config['databases'] : [];
+
+        if ($this->isFromEnv()) {
+            foreach ($this->databases as $key => $database) {
+                $this->databases[$key] = getenv($database);
+            }
+        }
+    }
+
+    /**
+     * Are credentials references from environment variables?
+     *
+     * @return bool
+     */
+    private function isFromEnv()
+    {
+        return isset($this->config['fromEnv']) && $this->config['fromEnv'];
     }
 
     /**
@@ -37,9 +61,7 @@ class MongoDbCleanState extends Module
             return $this->config['server'];
         }
 
-        return isset($this->config['fromEnv']) && $this->config['fromEnv']
-            ? $this->serverFromEnv()
-            : $this->serverFromConfig();
+        return $this->isFromEnv() ? $this->serverFromEnv() : $this->serverFromConfig();
     }
 
     /**
@@ -80,17 +102,30 @@ class MongoDbCleanState extends Module
         return $server;
     }
 
+    /**
+     * Get the MongoClient
+     *
+     * @return \MongoClient
+     */
     public function getMongoClient()
     {
         if (null === $this->mongoClient) {
-            $server = $this->server();
-            $options = isset($this->config['options']) ? $this->config['options'] : ['connect' => true];
-            $driver_options = isset($this->config['driver_options']) ? $this->config['driver_options'] : [];
-
-            $this->mongoClient = new \MongoClient($server, $options, $driver_options);
+            $this->instantiateMongoClient();
         }
 
         return $this->mongoClient;
+    }
+
+    /**
+     * Instantiate the MongoClient
+     */
+    private function instantiateMongoClient()
+    {
+        $server = $this->server();
+        $options = isset($this->config['options']) ? $this->config['options'] : ['connect' => true];
+        $driver_options = isset($this->config['driver_options']) ? $this->config['driver_options'] : [];
+
+        $this->mongoClient = new \MongoClient($server, $options, $driver_options);
     }
 
     /**
