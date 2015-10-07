@@ -10,7 +10,7 @@ class MongoDbCleanState extends Module
 
     private $mongoClient;
 
-    private $databases = [];
+    private $databases;
 
     /**
      * @param ModuleContainer $container
@@ -19,14 +19,21 @@ class MongoDbCleanState extends Module
     public function __construct(ModuleContainer $container, $config = null)
     {
         parent::__construct($container, $config);
-
-        $this->databases();
     }
 
     /**
      * Get the databases
      */
     private function databases()
+    {
+        if (null === $this->databases) {
+            $this->initializeDatabases();
+        }
+
+        return $this->databases;
+    }
+
+    private function initializeDatabases()
     {
         $this->databases = isset($this->config['databases']) ? $this->config['databases'] : [];
 
@@ -135,7 +142,7 @@ class MongoDbCleanState extends Module
      */
     public function _before(TestCase $test)
     {
-        foreach ($this->databases as $database) {
+        foreach ($this->databases() as $database) {
             $mongoDb = $this->getMongoClient()->selectDB($database);
             $mongoDb->drop();
         }
