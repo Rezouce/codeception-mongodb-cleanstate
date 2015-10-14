@@ -10,3 +10,6 @@ modules:
     enabled:
         - MongoDbCleanState
 `
+## License
+
+This library is open-sourced software licensed under the MIT license

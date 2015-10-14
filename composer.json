@@ -2,7 +2,7 @@
   "name": "rezouce/codeception-mongodb-cleanstate",
   "description": "Drop MongoDB databases to ensure each test using MongoDB are in a clean environment",
   "minimum-stability": "stable",
-  "license": "proprietary",
+  "license": "MIT",
   "authors": [
     {
       "name": "Rezouce",
