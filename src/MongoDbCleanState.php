@@ -129,7 +129,7 @@ class MongoDbCleanState extends Module
     private function instantiateMongoClient()
     {
         $server = $this->server();
-        $options = isset($this->config['options']) ? $this->config['options'] : ['connect' => true];
+        $options = isset($this->config['options']) ? $this->config['options'] : ['connect' => true, 'fsync' => true];
         $driver_options = isset($this->config['driver_options']) ? $this->config['driver_options'] : [];
 
         $this->mongoClient = new \MongoClient($server, $options, $driver_options);
